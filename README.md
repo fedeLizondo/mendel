@@ -1,5 +1,7 @@
 # Challenge Mendel
 
+---
+
 ## Descripción
 
 Se va a utilizar una arquitectura hexagonal para la implementación,
@@ -28,3 +30,31 @@ La estructura está compuesta:
 
 ## Cómo iniciar el proyecto?
 
+## Endpoints
+
+---
+
+* Guardar Transacción
+
+```
+PUT /transactions/$transaction_id
+```
+
+Por la descripción y los ejemplos, me parece que debería ser un POST,
+dado que el put debería ser para modificaciones y no para agregar recursos.
+
+---
+* Consultar Transacciones por Tipo:
+
+```
+GET /transactions/types/$type
+```
+Si el tipo es uno inexistente retorno una lista vacía
+
+
+---
+* Consulta Suma Acumulativa por Id:
+```
+GET /transactions/sum/$transaction_id
+```
+Si el transaction id es inexistente retorno 0
