@@ -32,7 +32,7 @@ class TransactionControllerTest {
 
 
     @Test
-    void givenNewTransactionWhenSaveTransactionThenReturn200(){
+    void givenNewTransactionWhenSaveTransactionThenReturn200() {
         //Arrange
         long transactionId = 1L;
         double amount = 100.00;
@@ -58,7 +58,7 @@ class TransactionControllerTest {
     }
 
     @Test
-    void givenTypeWhenFindTransactionByTypeThenReturn200(){
+    void givenTypeWhenFindTransactionByTypeThenReturn200() {
         //Arrange
         String find = "TEST";
 
