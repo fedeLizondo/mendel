@@ -2,6 +2,7 @@ package com.fedelizondo.challenge.infrastructure.adapter.in.rest.controller;
 
 import com.fedelizondo.challenge.application.port.in.CreateTransactionUseCase;
 import com.fedelizondo.challenge.application.port.in.FindTransactionIdsByTypeUseCase;
+import com.fedelizondo.challenge.application.port.in.GetCumulativeSumTransactionUseCase;
 import com.fedelizondo.challenge.dominio.model.Transaction;
 import com.fedelizondo.challenge.infrastructure.adapter.in.rest.request.TransactionRequest;
 import com.fedelizondo.challenge.infrastructure.adapter.in.rest.response.TransactionResponse;
@@ -19,10 +20,12 @@ public class TransactionController {
 
     private final CreateTransactionUseCase createTransactionUseCase;
     private final FindTransactionIdsByTypeUseCase findTransactionIdsByTypeUseCase;
+    private final GetCumulativeSumTransactionUseCase getCumulativeSumTransactionUseCase;
 
-    public TransactionController(CreateTransactionUseCase createTransactionUseCase, FindTransactionIdsByTypeUseCase findTransactionIdsByTypeUseCase) {
+    public TransactionController(CreateTransactionUseCase createTransactionUseCase, FindTransactionIdsByTypeUseCase findTransactionIdsByTypeUseCase, GetCumulativeSumTransactionUseCase getCumulativeSumTransactionUseCase) {
         this.createTransactionUseCase = createTransactionUseCase;
         this.findTransactionIdsByTypeUseCase = findTransactionIdsByTypeUseCase;
+        this.getCumulativeSumTransactionUseCase = getCumulativeSumTransactionUseCase;
     }
 
     @PutMapping("/{transactionId}")
@@ -49,5 +52,10 @@ public class TransactionController {
     @GetMapping("/types/{type}")
     public ResponseEntity<List<Long>> findTransactionByType(@NotBlank @PathVariable String type) {
         return ResponseEntity.ok(findTransactionIdsByTypeUseCase.findTransactionByType(type.toLowerCase(Locale.ROOT)));
+    }
+
+    @GetMapping("/sum/{transactionId}")
+    public ResponseEntity<Double> getTransactionSum(@PathVariable Long transactionId) {
+        return ResponseEntity.ok(getCumulativeSumTransactionUseCase.getCumulativeSumForTransaction(transactionId));
     }
 }

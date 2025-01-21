@@ -109,4 +109,39 @@ class TransactionRepositoryTest {
         assertTrue(subject.isEmpty());
     }
 
+    @Test
+    void givenExistingTransactionWhenGetCumulativeSumThenReturnListOfTransactions() {
+        //Arrange
+        Long findId = 1L;
+        double amount = 10;
+        String type = "test";
+        Long parentId = null;
+        Transaction transaction = new Transaction(findId, amount, type, parentId);
+        transactionRepository.save(transaction);
+
+        //Act
+        double subject = transactionRepository.getCumulativeSumForTransaction(findId);
+
+        //Assert
+        assertEquals(10D, subject);
+    }
+
+
+    @Test
+    void givenMultipleExistingTransactionWhenGetCumulativeSumThenReturnListOfTransactions() {
+        //Arrange
+        Long findId = 1L;
+        double amount = 10;
+        String type = "test";
+        Long parentId = null;
+        transactionRepository.save(new Transaction(findId, amount, type, parentId));
+        transactionRepository.save(new Transaction(2L, amount, type, findId));
+
+        //Act
+        double subject = transactionRepository.getCumulativeSumForTransaction(findId);
+
+        //Assert
+        assertEquals(20D, subject);
+    }
+
 }
