@@ -2,6 +2,7 @@ package com.fedelizondo.challenge.infrastructure.adapter.in.rest.controller;
 
 import com.fedelizondo.challenge.application.port.in.CreateTransactionUseCase;
 import com.fedelizondo.challenge.application.port.in.FindTransactionIdsByTypeUseCase;
+import com.fedelizondo.challenge.application.port.in.GetCumulativeSumTransactionUseCase;
 import com.fedelizondo.challenge.dominio.model.Transaction;
 import com.fedelizondo.challenge.infrastructure.adapter.in.rest.request.TransactionRequest;
 import com.fedelizondo.challenge.infrastructure.adapter.in.rest.response.TransactionResponse;
@@ -13,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -22,14 +23,19 @@ class TransactionControllerTest {
     TransactionController transactionController;
     CreateTransactionUseCase createTransactionUseCase;
     FindTransactionIdsByTypeUseCase findTransactionIdsByTypeUseCase;
+    GetCumulativeSumTransactionUseCase getCumulativeSumTransactionUseCase;
 
     @BeforeEach
     void setUp() {
         createTransactionUseCase = mock(CreateTransactionUseCase.class);
         findTransactionIdsByTypeUseCase = mock(FindTransactionIdsByTypeUseCase.class);
-        transactionController = new TransactionController(createTransactionUseCase, findTransactionIdsByTypeUseCase);
+        getCumulativeSumTransactionUseCase = mock(GetCumulativeSumTransactionUseCase.class);
+        transactionController = new TransactionController(
+                createTransactionUseCase,
+                findTransactionIdsByTypeUseCase,
+                getCumulativeSumTransactionUseCase
+        );
     }
-
 
     @Test
     void givenNewTransactionWhenSaveTransactionThenReturn200() {
@@ -72,6 +78,22 @@ class TransactionControllerTest {
         List<Long> ids = response.getBody();
         assertEquals(1, ids.size());
         assertEquals(1L, ids.get(0));
+    }
+
+    @Test
+    void givenValidIdWhenGetTransactionSumThenReturnSum() {
+        //Arrange
+        Long search = 1L;
+        when(getCumulativeSumTransactionUseCase.getCumulativeSumForTransaction(search)).thenReturn(10D);
+
+        //Act
+        ResponseEntity<Double> response = transactionController.getTransactionSum(search);
+
+        //Assert
+        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
+        Double sum = response.getBody();
+
+        assertEquals(10D, sum);
     }
 
 }
