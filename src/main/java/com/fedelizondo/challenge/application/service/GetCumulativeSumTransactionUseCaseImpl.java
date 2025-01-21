@@ -4,7 +4,9 @@ import com.fedelizondo.challenge.application.port.in.GetCumulativeSumTransaction
 import com.fedelizondo.challenge.application.port.out.FindByIdTransactionUseCaseOut;
 import com.fedelizondo.challenge.application.port.out.GetCumulativeSumForTransactionUseCaseOut;
 import com.fedelizondo.challenge.dominio.model.Transaction;
+import org.springframework.stereotype.Service;
 
+@Service
 public class GetCumulativeSumTransactionUseCaseImpl implements GetCumulativeSumTransactionUseCase {
 
     private final GetCumulativeSumForTransactionUseCaseOut getCumulativeSumForTransactionUseCaseOut;
