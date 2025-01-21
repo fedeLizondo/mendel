@@ -31,7 +31,7 @@ public class TransactionController {
         Transaction transaction = new Transaction(
                 transactionId,
                 transactionRequest.getAmount(),
-                transactionRequest.getType(),
+                transactionRequest.getType().toLowerCase(Locale.ROOT),
                 transactionRequest.getParentId()
         );
 
