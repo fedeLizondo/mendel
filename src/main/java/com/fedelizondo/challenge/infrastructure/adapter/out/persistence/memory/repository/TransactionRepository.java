@@ -2,6 +2,7 @@ package com.fedelizondo.challenge.infrastructure.adapter.out.persistence.memory.
 
 import com.fedelizondo.challenge.application.port.out.FindByIdTransactionUseCaseOut;
 import com.fedelizondo.challenge.application.port.out.FindByTypeTransactionsUseCaseOut;
+import com.fedelizondo.challenge.application.port.out.GetCumulativeSumForTransactionUseCaseOut;
 import com.fedelizondo.challenge.application.port.out.SaveTransactionUseCaseOut;
 import com.fedelizondo.challenge.dominio.model.Transaction;
 import com.fedelizondo.challenge.infrastructure.adapter.out.persistence.memory.entity.TransactionEntity;
@@ -17,7 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TransactionRepository implements
         FindByIdTransactionUseCaseOut,
         SaveTransactionUseCaseOut,
-        FindByTypeTransactionsUseCaseOut {
+        FindByTypeTransactionsUseCaseOut,
+        GetCumulativeSumForTransactionUseCaseOut {
 
     private static final ConcurrentHashMap<Long, TransactionEntity> transactions = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, List<TransactionEntity>> types = new ConcurrentHashMap<>();
@@ -32,7 +34,7 @@ public class TransactionRepository implements
     @Override
     public Transaction save(Transaction transaction) {
         TransactionEntity transactionEntity = new TransactionEntity(transaction.id(), transaction.amount(), transaction.type(), transaction.parentId());
-        transactions.putIfAbsent(transactionEntity.getTransactionId(), transactionEntity);
+        saveTransactionEntity(transactionEntity);
         saveType(transaction.type(), transactionEntity);
         return new Transaction(transactionEntity.getTransactionId(), transactionEntity.getAmount(), transactionEntity.getType(), transactionEntity.getParentId());
     }
@@ -49,6 +51,11 @@ public class TransactionRepository implements
                 .toList();
     }
 
+    @Override
+    public double getCumulativeSumForTransaction(Long transactionId) {
+        return transactions.get(transactionId).getTotal();
+    }
+
     public static void clearData() {
         transactions.clear();
         types.clear();
@@ -57,5 +64,16 @@ public class TransactionRepository implements
     public static void saveType(String type, TransactionEntity entity) {
         types.putIfAbsent(type, new ArrayList<>());
         types.get(type).add(entity);
+    }
+
+    public static void saveTransactionEntity(TransactionEntity transaction) {
+        transactions.putIfAbsent(transaction.getTransactionId(), transaction);
+
+        Long parent = transaction.getParentId();
+        while (parent != null && transactions.containsKey(parent)) {
+            TransactionEntity parentEntity = transactions.get(parent);
+            parentEntity.addTotal(transaction.getAmount());
+            parent = parentEntity.getParentId();
+        }
     }
 }
