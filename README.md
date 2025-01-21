@@ -30,6 +30,24 @@ La estructura está compuesta:
 
 ## Cómo iniciar el proyecto?
 
+Docker 
+
+```bash
+    docker build -t challenge .
+```
+```bash
+    docker run -p 8080:8080 challenge 
+```
+
+---
+
+Docker compose
+
+```bash
+  docker compose up
+```
+
+
 ## Endpoints
 
 ---
