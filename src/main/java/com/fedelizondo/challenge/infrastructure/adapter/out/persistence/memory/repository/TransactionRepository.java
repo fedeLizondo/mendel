@@ -56,24 +56,26 @@ public class TransactionRepository implements
         return transactions.get(transactionId).getTotal();
     }
 
-    public static void clearData() {
-        transactions.clear();
-        types.clear();
-    }
-
-    public static void saveType(String type, TransactionEntity entity) {
+    private static void saveType(String type, TransactionEntity entity) {
         types.putIfAbsent(type, new ArrayList<>());
         types.get(type).add(entity);
     }
 
-    public static void saveTransactionEntity(TransactionEntity transaction) {
+    private static void saveTransactionEntity(TransactionEntity transaction) {
         transactions.putIfAbsent(transaction.getTransactionId(), transaction);
+        updateAmountInParents(transaction.getParentId(), transaction.getAmount());
+    }
 
-        Long parent = transaction.getParentId();
+    private static void updateAmountInParents(Long parent, double amount) {
         while (parent != null && transactions.containsKey(parent)) {
             TransactionEntity parentEntity = transactions.get(parent);
-            parentEntity.addTotal(transaction.getAmount());
+            parentEntity.addTotal(amount);
             parent = parentEntity.getParentId();
         }
+    }
+
+    public static void clearData() {
+        transactions.clear();
+        types.clear();
     }
 }

@@ -23,7 +23,7 @@ public class GetCumulativeSumTransactionUseCaseImpl implements GetCumulativeSumT
     @Override
     public double getCumulativeSumForTransaction(Long id) {
         Transaction transaction = findByIdTransactionUseCaseOut.findById(id).orElse(null);
-        if(transaction == null ) {
+        if (transaction == null) {
             return 0;
         }
         return getCumulativeSumForTransactionUseCaseOut.getCumulativeSumForTransaction(id);
