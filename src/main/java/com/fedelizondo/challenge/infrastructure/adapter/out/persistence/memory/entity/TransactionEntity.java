@@ -35,7 +35,7 @@ public class TransactionEntity {
         return total;
     }
 
-    public void addTotal(double amount) {
-        total += amount;
+    public synchronized void addTotal(double amount) {
+            total += amount;
     }
 }
